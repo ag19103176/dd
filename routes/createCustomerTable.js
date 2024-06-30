@@ -302,5 +302,101 @@ router.patch("/updateGraph/:objid/:id", async (req, res) => {
     res.status(500).json({ message: "Error updating document" });
   }
 });
+router.get("/getAvg", async (req, res) => {
+  try {
+    const { chartSource, field1 } = req.query;
+    if (!chartSource || !field1) {
+      return res.status(400).send("Table name and fields are required.");
+    }
+    console.log("ChartSource:", chartSource);
+    console.log("Field1:", field1);
+    const aggregation = [
+      {
+        $group: {
+          _id: null,
+          average: { $avg: { $toDouble: `$${field1}` } },
+        },
+      },
+    ];
+    const response = await schemas[chartSource].aggregate(aggregation).exec();
+    res.send({
+      status: 200,
+      msg: "Request processed successfully",
+      data: response,
+    });
+  } catch (err) {
+    console.error("Error fetching data: ", err.message);
+    res.status(500).send("Error fetching data");
+  }
+});
+
+router.get("/getSum", async (req, res) => {
+  try {
+    const { chartSource, field1 } = req.query;
+
+    if (!chartSource || !field1) {
+      return res.status(400).send("Table name and field1 are required.");
+    }
+
+    console.log("ChartSource:", chartSource);
+    console.log("Field1:", field1);
+
+    const response = await schemas[chartSource].aggregate([
+      {
+        $group: {
+          _id: null,
+          totalSum: { $sum: { $toDouble: `$${field1}` } },
+        },
+      },
+    ]);
+
+    console.log("Aggregation Result:", response);
+
+    res.send({
+      status: 200,
+      msg: "Sum computed successfully",
+      data: response,
+    });
+  } catch (err) {
+    console.error("Error computing sum: ", err.message);
+    res.status(500).send("Error computing sum");
+  }
+});
+// router.get("/getGraph", async (req, res) => {
+//   try {
+//     const data = await CommonSchema.find({});
+//     const filteredData = data.map((doc) => ({
+//       _id: doc._id,
+//       graph: doc.graph.filter((entry) => !entry.isDeleted),
+//     }));
+//     // console.log(filteredData);
+//     res.send(filteredData);
+//   } catch (err) {
+//     console.error("Error fetching data from MongoDB: " + err);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
+// router.patch("/deleteGraph/:id", async (req, res) => {
+//   try {
+//     const graphId = req.body;
+//     const _id = req.params.id;
+//     const graphs = await CommonSchema.findOne({ _id: _id });
+//     // console.log(graphs);
+//     let graph = [];
+//     for (const item of graphs.graph) {
+//       if (item._id == graphId.id) {
+//         item.isDeleted = true;
+//       }
+//       graph.push(item);
+//     }
+//     const response = await CommonSchema.findByIdAndUpdate(_id, { graph });
+//     res.send(response);
+//     // console.log(graph);
+//   } catch (err) {
+//     console.error("Error deleting graph entry:", err);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 module.exports = router;

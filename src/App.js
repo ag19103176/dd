@@ -24,6 +24,7 @@ function App() {
     { name: "Pie Graph", id: 1 },
     { name: "Bar Graph", id: 2 },
     { name: "Line Graph", id: 3 },
+    // { name: "Sum", id: 4 },
   ];
 
   const [selectedSource, setSelectedSource] = useState("");
@@ -539,6 +540,7 @@ function App() {
       <ResponsiveReactGridLayout
         className="layout"
         rowHeight={60}
+        width={1200}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         layout={generateLayout(displayGraph)}
         onLayoutChange={onLayoutChange}
@@ -548,6 +550,7 @@ function App() {
         droppingItem={{ i: "xx", h: 50, w: 250 }}
         isResizable={isDraggable}
         isDraggable={isDraggable}
+        breakpoints={{ lg: 100 }}
       >
         {layout &&
           displayGraph.map((d, index) => (
@@ -576,9 +579,9 @@ function App() {
               {d.chartType === "1" ? (
                 <PieChart data={d} />
               ) : d.chartType === "2" ? (
-                <BarChart data={d.json_data} />
+                <BarChart data={d} />
               ) : d.chartType === "3" ? (
-                <LineChart data={d.json_data} />
+                <LineChart data={d} />
               ) : null}
             </div>
           ))}

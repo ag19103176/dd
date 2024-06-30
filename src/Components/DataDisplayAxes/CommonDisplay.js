@@ -3,6 +3,7 @@ import axios from "axios";
 import DataModeComponent from "./DataMode";
 import DisplayModeComponent from "./DisplayPieMode";
 import DisplayBarModeComponent from "./DisplayBarMode";
+import SumDisplay from "./sumDisplay";
 import Axes from "./CommonAxes";
 import "./dataDisplay.css";
 
@@ -190,6 +191,7 @@ const DataDisplayComponent = ({
             />
           )}
           {(type === "3" || type === "line") && <DisplayBarModeComponent />}
+          {type === "4" && <SumDisplay dimensions={measures} />}
         </>
       )}
       {mode === "axes" && (
